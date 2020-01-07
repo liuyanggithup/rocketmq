@@ -16,7 +16,6 @@
  */
 package org.apache.rocketmq.example.quickstart;
 
-import java.util.List;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
@@ -25,17 +24,24 @@ import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.MessageExt;
 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * This example shows how to subscribe and consume messages using providing {@link DefaultMQPushConsumer}.
  */
-public class Consumer {
+public class Consumer1 {
+
+    private int add(){
+        return num.addAndGet(1);
+    }
 
     public static void main(String[] args) throws InterruptedException, MQClientException {
 
         /*
          * Instantiate with specified consumer group name.
          */
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("please_rename_unique_group_name_4");
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("consumer_group_1");
 
         /*
          * Specify name server addresses.
@@ -48,17 +54,18 @@ public class Consumer {
          * }
          * </pre>
          */
-
+        consumer.setNamesrvAddr("172.16.12.234:9876");
         /*
          * Specify where to start in case the specified consumer group is a brand new one.
          */
-        consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
+
+        consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
 
         /*
          * Subscribe one more more topics to consume.
          */
-        consumer.subscribe("TopicTest", "*");
-
+        consumer.subscribe("topic", "tagA");
+        Consumer1 consumer1 = new Consumer1();
         /*
          *  Register callback to execute on arrival of messages fetched from brokers.
          */
@@ -66,8 +73,11 @@ public class Consumer {
 
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs,
-                ConsumeConcurrentlyContext context) {
-                System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), msgs);
+                                                            ConsumeConcurrentlyContext context) {
+                for (MessageExt msg:msgs){
+                    System.out.printf("%s Receive New Messages: %s %n", "consumer_group_1 tagA", new String(msg.getBody()));
+                    System.out.println(consumer1.add());
+                }
                 return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             }
         });
@@ -79,4 +89,6 @@ public class Consumer {
 
         System.out.printf("Consumer Started.%n");
     }
+
+    AtomicInteger num = new AtomicInteger(0);
 }

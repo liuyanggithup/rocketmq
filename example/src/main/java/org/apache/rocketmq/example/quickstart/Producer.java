@@ -44,7 +44,7 @@ public class Producer {
          * }
          * </pre>
          */
-
+        producer.setNamesrvAddr("172.16.12.234:9876");
         /*
          * Launch the instance.
          */
@@ -56,17 +56,26 @@ public class Producer {
                 /*
                  * Create a message instance, specifying topic, tag and message body.
                  */
-                Message msg = new Message("TopicTest" /* Topic */,
-                    "TagA" /* Tag */,
-                    ("Hello RocketMQ " + i).getBytes(RemotingHelper.DEFAULT_CHARSET) /* Message body */
+                Message msg = new Message("topic" /* Topic */,
+                    "tagA" /* Tag */,
+                    ("tagA-" + i).getBytes(RemotingHelper.DEFAULT_CHARSET) /* Message body */
                 );
 
                 /*
                  * Call send message to deliver message to one of brokers.
                  */
                 SendResult sendResult = producer.send(msg);
-
                 System.out.printf("%s%n", sendResult);
+                Message msg2 = new Message("topic" /* Topic */,
+                        "tagB" /* Tag */,
+                        ("tagB-" + i).getBytes(RemotingHelper.DEFAULT_CHARSET) /* Message body */
+                );
+
+                /*
+                 * Call send message to deliver message to one of brokers.
+                 */
+                SendResult sendResult2 = producer.send(msg2);
+                System.out.printf("%s%n", sendResult2);
             } catch (Exception e) {
                 e.printStackTrace();
                 Thread.sleep(1000);

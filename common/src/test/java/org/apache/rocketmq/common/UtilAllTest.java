@@ -33,6 +33,12 @@ public class UtilAllTest {
     }
 
     @Test
+    public void test(){
+        byte a = 'a';
+        System.out.println(a);
+    }
+
+    @Test
     public void testProperties2Object() {
         DemoConfig demoConfig = new DemoConfig();
         Properties properties = new Properties();
