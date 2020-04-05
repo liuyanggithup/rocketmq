@@ -22,21 +22,19 @@ import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.example.batch.RequestAccessDataMsg;
+import org.apache.rocketmq.example.batch.RequestAccessDisableListMsg;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
-
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This class demonstrates how to send messages to brokers using provided {@link DefaultMQProducer}.
  */
-public class Producer {
+public class Producer2 {
     public static void main(String[] args) throws MQClientException, InterruptedException {
 
         /*
          * Instantiate with a producer group name.
          */
-        DefaultMQProducer producer = new DefaultMQProducer("hlj-stargate-producer");
+        DefaultMQProducer producer = new DefaultMQProducer("hlj-risk-control-producer");
 
         /*
          * Specify name server addresses.
@@ -49,29 +47,27 @@ public class Producer {
          * }
          * </pre>
          */
-        producer.setNamesrvAddr("127.0.0.1:9876");
+        producer.setNamesrvAddr("127.0.0.1:10016");
         /*
          * Launch the instance.
          */
         producer.start();
 
-        for (int i = 0; i <= 2000; i++) {
+        for (int i = 0; i < 1; i++) {
             try {
-                Long userId = 654321L;
                 /*
                  * Create a message instance, specifying topic, tag and message body.
                  */
-                RequestAccessDataMsg requestAccessDataMsg = new RequestAccessDataMsg();
-                requestAccessDataMsg.setClientIp("129.123.15.48");
-                requestAccessDataMsg.setHost("localhost");
-                requestAccessDataMsg.setIdfa("aaa");
-                requestAccessDataMsg.setPath("/api/test/jello");
-                requestAccessDataMsg.setRt(20L);
-                requestAccessDataMsg.setRequestTime(new Date());
+                RequestAccessDisableListMsg requestAccessDisableListMsg = new RequestAccessDisableListMsg();
+                requestAccessDisableListMsg.setDeviceId("121.1.2.3");
+                requestAccessDisableListMsg.setDeviceType("clientIp");
+                requestAccessDisableListMsg.setPath("/api/list");
+                requestAccessDisableListMsg.setRequestAccessDisableRuleDesc("test1");
+                requestAccessDisableListMsg.setRequestAccessDisableRuleType("t1");
 
-                Message msg = new Message("hlj-stargate-request-access-data-topic" /* Topic */,
-                    "original-request-record" /* Tag */,
-                   (JSON.toJSONString(requestAccessDataMsg)).getBytes(RemotingHelper.DEFAULT_CHARSET) /* Message body */
+                Message msg = new Message("hlj-risk-analyze-center-request-access-disable-list-topic" /* Topic */,
+                    "disable-list" /* Tag */,
+                    (JSON.toJSONString(requestAccessDisableListMsg)).getBytes(RemotingHelper.DEFAULT_CHARSET) /* Message body */
                 );
 
                 /*
@@ -80,7 +76,6 @@ public class Producer {
                 SendResult sendResult = producer.send(msg);
 
                 System.out.printf("%s%n", sendResult);
-                //TimeUnit.SECONDS.sleep(1);
             } catch (Exception e) {
                 e.printStackTrace();
                 Thread.sleep(1000);

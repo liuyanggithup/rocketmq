@@ -16,6 +16,7 @@
  */
 package org.apache.rocketmq.example.quickstart;
 
+import java.net.SocketAddress;
 import java.util.List;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
@@ -35,7 +36,7 @@ public class Consumer {
         /*
          * Instantiate with specified consumer group name.
          */
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("please_rename_unique_group_name_4");
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("hlj-risk-control-disable-list-consumer");
 
         /*
          * Specify name server addresses.
@@ -49,6 +50,8 @@ public class Consumer {
          * </pre>
          */
 
+        consumer.setNamesrvAddr("127.0.0.1:10016");
+
         /*
          * Specify where to start in case the specified consumer group is a brand new one.
          */
@@ -57,7 +60,7 @@ public class Consumer {
         /*
          * Subscribe one more more topics to consume.
          */
-        consumer.subscribe("TopicTest", "*");
+        consumer.subscribe("channel-track-risk-control-disable-list-topic", "*");
 
         /*
          *  Register callback to execute on arrival of messages fetched from brokers.
@@ -67,6 +70,9 @@ public class Consumer {
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs,
                 ConsumeConcurrentlyContext context) {
+                MessageExt messageExt = msgs.get(0);
+                SocketAddress bornHost = messageExt.getBornHost();
+                bornHost.toString();
                 System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), msgs);
                 return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             }

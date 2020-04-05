@@ -31,7 +31,8 @@ public class PushConsumer {
     public static void main(String[] args) throws InterruptedException, MQClientException {
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("please_rename_unique_group_name_1");
 
-        consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
+        consumer.setNamesrvAddr("127.0.0.1:9876");
+        consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
 
         consumer.setMessageModel(MessageModel.BROADCASTING);
 
