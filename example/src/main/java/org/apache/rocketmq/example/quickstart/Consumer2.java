@@ -29,7 +29,7 @@ import org.apache.rocketmq.common.message.MessageExt;
 /**
  * This example shows how to subscribe and consume messages using providing {@link DefaultMQPushConsumer}.
  */
-public class Consumer {
+public class Consumer2 {
 
     public static void main(String[] args) throws InterruptedException, MQClientException {
 
